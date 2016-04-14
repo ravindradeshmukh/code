@@ -1,13 +1,13 @@
 from django.http import HttpResponse
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
+from rango.models import Category
 
 def index(request):
-	context=RequestContext(request)
-	context_dict={'boldmessage': "I am bold font from the context"}
-	return render_to_response('rango/index.html', context_dict, context)
-	#response="Rango says Hello <a href='/rango/about/'>About</a>"
-	#return HttpResponse(response)
+    category_list = Category.objects.order_by('-likes')[:5]
+    context_dict = {'categories': category_list}
+
+    return render(request, 'rango/index.html', context_dict)
 
 def about(request):
 	context=RequestContext(request)	
