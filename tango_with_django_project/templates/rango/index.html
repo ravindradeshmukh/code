@@ -1,24 +1,38 @@
 <!DOCTYPE html>
-
-{% load static %}
-
 <html>
 	<head>
 		<title>Rango</title>
 		
 	<body>
-		<h1>Rango says... hello!</h1>
+		{%if user.is_authenticated%}
+			<h1>Rango says... hello {{user.username}}!</h1>
+			<a href="/rango/restricted/">Restricted Page</a><br/>
+			<a href="/rango/logout/">Logout</a><br/>
+			<a href="/rango/add_category/">Add Category</a><br/>		
+		{%else%}
+			<h1>Rango says... hello!</h1>
+			<a href="/rango/login/">Login</a><br/>
+		{%endif%}		
 		{% if categories %}
 			<ul>
 				{% for category in categories %}
-				<li> {{ category.name }} </li>
+				<li><a href="/rango/category/{{category.slug}}"> {{ category.name }} </a></li>
 				{% endfor %}
 			</ul>
 		{% else %}
 			<strong>There are no categories present. </strong>
 		{% endif %}
-
+		{% if pages %}
+			<ul>
+				{% for page in pages %}
+					<li>{{page.title}}</li>
+				{% endfor %}
+			</ul>
+		{% else %}
+			<strong>There are no pages present. </strong>
+		{% endif %}
+		<a href="/rango/register/">Register Here</a></br/>
 		<a href="/rango/about/">About</a><br/>
-		<img src="{% static "rango.jpg" %}" alt="Picture of Rango" />
+
 	</body>
 </html>
