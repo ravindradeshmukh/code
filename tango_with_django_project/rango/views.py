@@ -4,19 +4,39 @@ from django.shortcuts import render_to_response, render
 from rango.models import Category, Page, UserProfile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 from rango.forms import CategoryForm, PageForm, UserProfileForm,UserForm
 
-
 def index(request):
-    	context_dict={}
-	try:
-		category_list = Category.objects.order_by('-likes')[:5]
-    		page_list = Page.objects.order_by('-views')[:5]
-    		context_dict['categories']=category_list
-    		context_dict['pages']=page_list
-	except Category.DoesNotExists:
-		pass
-    	return render(request, 'rango/index.html', context_dict)
+
+	category_list=Category.objects.order_by('-likes')[:5]
+	page_list=Page.objects.order_by('-views')[:5]
+	context_dict={'categories':category_list, 'pages':page_list}
+	visits=request.session.get('visits')
+
+	if not visits:
+		visits=1
+
+	reset_last_visit_time=False
+	last_visit=request.session.get('last_visit')
+	
+	if last_visit:
+		last_visit_time=datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+		if(datetime.now() - last_visit_time).seconds > 0:
+			visits +=1
+			reset_last_visit_time=True
+
+	else:
+		reset_last_visit_time=True
+
+	if reset_last_visit_time:
+		request.session['last_visit']=str(datetime.now())
+		request.session['visits']=visits
+
+	context_dict['visits']=visits
+	response=render(request,'rango/index.html',context_dict)
+	return response
 
 def about(request):
 	context=RequestContext(request)	
@@ -121,6 +141,8 @@ def some_view(request):
 @login_required
 def restricted(request):
 	return HttpResponseRedirect("Since you're logged in, you can see this text")
+	
+	
 
 
 def user_logout(request):

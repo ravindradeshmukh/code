@@ -1,38 +1,43 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Rango</title>
-		
-	<body>
-		{%if user.is_authenticated%}
-			<h1>Rango says... hello {{user.username}}!</h1>
-			<a href="/rango/restricted/">Restricted Page</a><br/>
-			<a href="/rango/logout/">Logout</a><br/>
-			<a href="/rango/add_category/">Add Category</a><br/>		
-		{%else%}
-			<h1>Rango says... hello!</h1>
-			<a href="/rango/login/">Login</a><br/>
-		{%endif%}		
-		{% if categories %}
-			<ul>
-				{% for category in categories %}
-				<li><a href="/rango/category/{{category.slug}}"> {{ category.name }} </a></li>
-				{% endfor %}
-			</ul>
-		{% else %}
-			<strong>There are no categories present. </strong>
-		{% endif %}
-		{% if pages %}
-			<ul>
-				{% for page in pages %}
-					<li>{{page.title}}</li>
-				{% endfor %}
-			</ul>
-		{% else %}
-			<strong>There are no pages present. </strong>
-		{% endif %}
-		<a href="/rango/register/">Register Here</a></br/>
-		<a href="/rango/about/">About</a><br/>
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}Index{% endblock %}
+{%block body_block %}
 
-	</body>
-</html>
+		{%if user.is_authenticated%}
+			<div class="page-header">
+					<h1>Rango says... hello {{user.username}}!</h1>
+				{%else%}
+					<h1>Rango says... hello!</h1>
+				{%endif%}		
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h2 class="panel-title"><h2>Most Liked Category</h2></h2>
+					{% if categories %}
+						<ul class="list-group">
+							{% for category in categories %}
+								<li class="list-group-item"><a href="/rango/category/{{category.slug}}"> {{ category.name }} </a></li>
+							{% endfor %}
+						</ul>
+					{% else %}
+						<strong>There are no categories present. </strong>
+					{% endif %}
+				</div>
+				<div class="panel-heading">
+					<h4 class="panel-title"><h2>Most Viewed Pages</h2></h4>
+					{% if pages %}
+						<ul class="list-group">
+							{% for page in pages %}
+								<li class="list-group-item"><a href="{{ page.url }}">{{ page.title }}</a> </li>
+							{% endfor %}<br/>
+						</ul>
+					{% else %}
+						<strong>There are no pages present. </strong>
+					{% endif %}
+				</div>
+			</div>
+		<p>visits: {{visits}}</p>
+{% endblock %}
+
+
