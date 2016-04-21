@@ -10,6 +10,10 @@ urlpatterns=patterns('',
 	url(r'^restricted/',views.restricted,name='restricted'),
 	url(r'^register/',views.register, name='register'),
 	url(r'^login/', views.user_login, name='login'),
+	url(r'^search/', views.search, name='search'),
+	url(r'^goto/(?P<page_id>[\w\-]+)/$',views.track, name='goto'),
+	url(r'^category_search/',views.category_search, name='category_search'),
+
 
 )
 

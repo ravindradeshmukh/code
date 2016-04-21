@@ -7,7 +7,7 @@
 {% block body_block %}
 
     <div class="page-header">
-        <h1>Search with Rango</h1>
+        <h1>Search Category in Project with Rango</h1>
     </div>
 
     <div class="row">
@@ -15,30 +15,29 @@
         <div class="panel panel-primary">
             <br/>
 
-            <form class="form-inline" id="user_form" method="post" action="{% url 'search' %}">
+            <form class="form-inline" id="user_form" method="post" action="{% url 'category_search' %}">
                 {% csrf_token %}
                 <!-- Display the search form elements here -->
-                <input class="form-control" type="text" size="50" name="query" value="" id="query" />
+                <input class="form-control" type="text" size="50" name="cat" value="" id="cat" />
                 <input class="btn btn-primary" type="submit" name="submit" value="Search" />
                 <br />
             </form>
 
             <div class="panel">
-                {% if result_list %}
                     <div class="panel-heading">
                     <h3 class="panel-title">Results</h3>
-                    <!-- Display search results in an ordered list -->
                     <div class="panel-body">
                         <div class="list-group">
-                            {% for result in result_list %}
-                                <div class="list-group-item">
-                                    <h4 class="list-group-item-heading"><a href="{{ result.link }}">{{ result.title }}</a></h4>
-                                    <p class="list-group-item-text">{{ result.summary }}</p>
+                            {% for c in category_list %}
+                                {% if cat == c.name %}
+                                    <div class="list-item">
+                                    <h4><a href="/rango/category/{{c.slug}}"> {{ c.name }} </a></h4>
                                 </div>
+                                {% endif %}                                
                             {% endfor %}
-                        </div>
+                            </div>
                     </div>
-                {% endif %}
+               
                 </div>
             </div>
  </div>

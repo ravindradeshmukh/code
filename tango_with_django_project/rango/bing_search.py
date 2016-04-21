@@ -1,49 +1,51 @@
 import json
 import urllib, urllib2
 
-BING_API_KEY='<insert_bing_api_key>'
+BING_API_KEY='iRJrNP+8s8yVpnJyMAWraiSr7It6P+Wwewmld1/M/2c'
 
 def run_query(search_terms):
-	root_url='https://api.datamarket.azure.com/Bing/Search/'
-	source='web'
+    root_url = 'https://api.datamarket.azure.com/Bing/Search/'
+    source = 'Web'
 
-	results_per_page=10
-	offset=0
+    results_per_page = 10
+    offset = 0
 
-	query="'{0}'".format(search_terms)
-	query=urllib.quote(query)
+    query = "'{0}'".format(search_terms)
+    query = urllib.quote(query)
 
-	search_url="{0}{1}?$format=json&$top={2}&$skip={3}&Query={4}".format(
-			root_url
-			source
-			results_per_page
-			offset
-			query)
+    search_url = "{0}{1}?$format=json&$top={2}&$skip={3}&Query={4}".format(
+        root_url,
+        source,
+        results_per_page,
+        offset,
+        query)
 
-	username=''
+    username = ''
 
-	password_mgr=urllib2.HTTPPasswordMgrWithDefaultRealm()
-	password_mgr.add_password(None, search_url, username,BING_API_KEY)
 
-	results=[]
+    password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+    password_mgr.add_password(None, search_url, username, BING_API_KEY)
 
-	try:
-		handler=urllib2.HTTPBasicsAuthHandler(password_mgr)
-		opener=urllib2.build_opener(handler)
-		urllib2.install_opener(opener)
+    results = []
 
-		response=urllib2.urlopen(search_url).read()
+    try:
+        handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+        opener = urllib2.build_opener(handler)
+        urllib2.install_opener(opener)
 
-		json_response=json.loads(response)
+        response = urllib2.urlopen(search_url).read()
 
-		for result in json_response['d']['results']:
-			results.append({
-				'title':result['Title'],
-				'link':result['Url'],
-				'summary': result['Description']})
+        json_response = json.loads(response)
 
-	except urllib2.URLError as e:
-		print "Error when querying the Bing API:",e
+        for result in json_response['d']['results']:
+            results.append({
+            'title': result['Title'],
+            'link': result['Url'],
+            'summary': result['Description']})
 
-	return results
+    except urllib2.URLError as e:
+        print "Error when querying the Bing API: ", e
+
+    return results
+
 

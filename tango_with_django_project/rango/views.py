@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from rango.forms import CategoryForm, PageForm, UserProfileForm,UserForm
+from rango.bing_search import run_query
 
 def index(request):
 
@@ -45,17 +46,32 @@ def about(request):
 	#return HttpResponse(response)
 
 def category(request,category_name_slug):
-	context_dict={}
-	try:
-		category=Category.objects.get(slug=category_name_slug)
-		context_dict['category_name']=category.name
-		pages=Page.objects.filter(category=category)
-		context_dict['pages']=pages
-		context_dict['category']=category
-	except Category.DoesNotExists:
-		pass
-	return render(request, 'rango/category.html', context_dict)
+	result_list=[]
+	if request.method=='POST' :
+		try:
+			category=request.POST['category'].strip()
+			if category:
+				category=Category.objects.get(slug=category_name_slug)
+				context_dict['category_name']=category.name
+				pages=Page.objects.filter(category=category).order_by('views')
+				context_dict['pages']=pages
+				context_dict['category']=category
+		except Category.DoesNotExists:
+				pass
+		return render(request,'rango/search.html',{'result_list': result_list})
+	else:
+		context_dict={}
+		try:
+			category=Category.objects.get(slug=category_name_slug)
+			context_dict['category_name']=category.name
+			pages=Page.objects.filter(category=category)
+			context_dict['pages']=pages
+			context_dict['category']=category
+		except Category.DoesNotExists:
+			pass
+		return render(request, 'rango/category.html', context_dict)
 
+	
 def add_category(request):
 	
 	if request.method == "POST":
@@ -103,8 +119,8 @@ def register(request):
 			user.save()
 			profile=profile_form.save(commit=False)
 			profile.user=user
-			if 'picture' in request.FILES:
-				profile.picture=request.FILES['picture']
+			# if 'picture' not in request.FILES:
+				# profile.picture=request.FILES[picture]
 			profile.save()
 			registered=True
 		else:
@@ -138,11 +154,34 @@ def some_view(request):
 		return HttpResponse("You are not logged in.")
 	else:
 		return HttpResponse("You are not logged in.")
+
 @login_required
 def restricted(request):
 	return HttpResponseRedirect("Since you're logged in, you can see this text")
 	
 	
+def search(request):
+	result_list=[]
+	if request.method=='POST' :
+		query=request.POST['query'].strip()
+		if query:
+			result_list=run_query(query)
+	return render(request,'rango/search.html',{'result_list': result_list})
+
+def track(request, page_id):
+	pages=Page.objects.get(id=page_id)
+	pages.views+=1
+	pages.save()
+	return HttpResponseRedirect(pages.url)
+	
+def category_search(request):
+	context_dict={}
+	categories=Category.objects.all()
+	if request.method=='POST':
+		cat=request.POST['cat']
+		context_dict['cat']=cat
+	context_dict['category_list']=categories
+	return render(request, 'rango/category_search.html', context_dict)	
 
 
 def user_logout(request):
