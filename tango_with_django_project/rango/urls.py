@@ -1,7 +1,7 @@
 from django.conf.urls import patterns,url,include
 from rango import views
 
-urlpatterns=patterns('', 
+urlpatterns=[ 
 	url(r'^$', views.index, name='index'),
 	url(r'^about/', views.about, name='about'),
 	url(r'^category_list/$', views.category_list, name='category_list'),
@@ -17,5 +17,5 @@ urlpatterns=patterns('',
 	# url(r'^like_category/$', views.like_category, name='like_category'),
 
 	
-)
+]
 
