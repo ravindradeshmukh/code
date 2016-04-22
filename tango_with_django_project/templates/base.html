@@ -2,8 +2,11 @@
 {% load staticfiles %}
   <html lang="en">
   <head>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="{% static 'js/jquery.js' %}"></script>
     <script src="{% static 'js/rango-jquery.js'%}"></script> 
+    <script src="{% static 'js/rango-ajax.js' %}"></script>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -38,15 +41,14 @@
                     {% if user.is_authenticated %}
                         <li><a href="{% url 'restricted' %}">Restricted Page</a></li>
                         <li><a href="{% url 'auth_logout' %}?next=/rango/">Logout</a></li>
-                        <li><a href="{% url 'add_category' %}">Add a New Category</a></li>
-                    {% else %}
+                        {% else %}
                         <li><a href="{% url 'register' %}">Register Here</a></li>
                         <li><a href="{% url 'login' %}">Login</a></li>
                     {% endif %}
                               <li><a href="{% url 'search'%}">Search</a></li>
+                              <li><a href="{% url 'category_list' %}">View Categories</a></li>
                               <li><a href="{% url 'category_search'%}">Category Search</a></li>
-                              
-                                <li><a href="{% url 'about' %}">About</a></li>
+                              <li><a href="{% url 'about' %}">About</a></li>
 
               </ul>
         </div>
